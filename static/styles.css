@@ -1,0 +1,327 @@
+/* General Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+}
+
+/* Sidebar */
+/* Sidebar Container Adjustments */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content */
+    padding-top: 40px; /* Adjusts the top padding */
+    width: 250px;
+    background-color: #003366;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Button Adjustments */
+.sidebar button {
+    width: 90%; /* Reduce width for padding around buttons */
+    margin: 10px 0; /* Consistent top and bottom margin */
+    padding: 15px;
+    font-size: 18px; /* Larger font size for better readability */
+    background-color: #0059b3;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.sidebar button:hover {
+    background-color: #0073e6;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    background-color: #f4f4f4;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.main-content h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+/* Patient Card Styles */
+#patient-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.patient-card {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    width: 200px;
+    padding: 20px;
+    transition: box-shadow 0.3s;
+}
+
+.patient-card p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #003366;
+}
+
+.patient-card:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* Dialog Box */
+.dialog {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog-content {
+    background-color: #ffffff;
+    width: 400px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.dialog-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #003366;
+}
+
+.dialog-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #003366;
+}
+
+.dialog-content input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dialog-buttons button {
+    padding: 10px 20px;
+    background-color: #0059b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dialog-buttons button:hover {
+    background-color: #0073e6;
+}
+
+/* Predict Disease Dialog Box */
+.dialog {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialog-content {
+    background: #f5f5fc;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.upload-container {
+    border: 2px dashed #888;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    background-color: #f9f9ff;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #357ab8;
+}
+
+.prediction-result {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: #e6e6f5;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.dialog-buttons {
+    margin-top: 20px;
+}
+
+.dialog-buttons button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.dialog-buttons button:hover {
+    background-color: #357ab8;
+}
+
+/* Patient list styling */
+#patient-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Styling for individual patient cards */
+.patient-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 250px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Hover effect for patient card */
+.patient-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background-color: #f0f8ff; /* Light blue background */
+}
+
+/* Styling for the profile image */
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 2px solid #4a90e2;
+}
+
+/* Styling for patient information */
+.patient-info {
+    text-align: center;
+}
+
+.patient-info p {
+    margin: 5px 0;
+}
+
+/* Dialog styling */
+.dialog {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.dialog-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Dialog image styling */
+.dialog-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4a90e2;
+    margin-bottom: 20px;
+}

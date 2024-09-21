@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthPredict - Predict Disease</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>HealthPredict</h2>
+        <button onclick="location.href='/home'">Home</button>
+        <button onclick="location.href='/predict_disease'">Predict Disease</button>
+    </div>
+
+    <div class="content">
+        <h2>Select Patient</h2>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <div class="patient-selection">
+                <input type="radio" name="patient" value="John Smith"> John Smith<br>
+                <input type="radio" name="patient" value="Emily Johnson"> Emily Johnson<br>
+                <input type="radio" name="patient" value="Michael Brown"> Michael Brown<br>
+            </div>
+
+            <h2>Select Disease</h2>
+            <div class="disease-selection">
+                <input type="radio" name="disease" value="A"> Disease A<br>
+                <input type="radio" name="disease" value="B"> Disease B<br>
+                <input type="radio" name="disease" value="C"> Disease C<br>
+            </div>
+
+            <h2>Upload Medical Image</h2>
+            <div class="file-upload">
+                <input type="file" name="image" required>
+                <button type="submit">Upload</button>
+            </div>
+
+            <div class="result-section">
+                <h2>Prediction Results</h2>
+                <p>{{ prediction_result }}</p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthPredict</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='home.js') }}"></script>
+    <!-- <script src="script.js" defer></script> -->
+</head>
+<body>
+    <div class="sidebar">
+        <h2>HealthPredict</h2>
+        <button onclick="showDialog()">Add Patient</button>
+        <!-- <button onclick="predictDisease()">Predict Disease</button> -->
+        <button onclick="showPredictDialog()">Predict Disease</button>
+    </div>
+    <div class="main-content">
+        <h1>Patients</h1>
+        <div id="patient-list">
+            {% for patient in patients %}
+                <div class="patient-card" 
+                    onclick="showPatientDetails(
+                        '{{ patient.name }}',
+                        '{{ patient.age }}',
+                        '{{ patient.contact }}',
+                        '{{ patient.email }}',
+                        '{{ patient.address }}',
+                        '{{ patient.profile_image_path }}'
+                    )">
+                    <img src="{{ patient.profile_image_path }}" 
+                         alt="{{ patient.name }}'s Profile Image" 
+                         class="profile-img">
+                    <div class="patient-info">
+                        <p><strong>{{ patient.name }}</strong></p>
+                        <p>Age: {{ patient.age }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    
+        <!-- Patient Details Dialog Box -->
+        <div id="patientDetailsDialog" class="dialog">
+            <div class="dialog-content">
+                <span class="close" onclick="hidePatientDetails()">&times;</span>
+                <img id="patientDialogImage" src="" alt="Profile Image" class="dialog-img">
+                <h2 id="dialogPatientName"></h2>
+                <p><strong>Age:</strong> <span id="dialogPatientAge"></span></p>
+                <p><strong>Contact:</strong> <span id="dialogPatientContact"></span></p>
+                <p><strong>Email:</strong> <span id="dialogPatientEmail"></span></p>
+                <p><strong>Address:</strong> <span id="dialogPatientAddress"></span></p>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Add Patient Dialog Box -->
+    <div id="addPatientDialog" class="dialog">
+        <div class="dialog-content">
+            <h2>Add Patient</h2>
+            <form id="patientForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+                
+                <label for="contact">Contact Number:</label>
+                <input type="text" id="contact" name="contact" required>
+                
+                <label for="profileImage">Profile Image:</label>
+                <input type="file" id="profileImage" name="profileImage" accept="image/*" required>
+                
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <div class="dialog-buttons">
+                    <button type="button" onclick="addPatient()">Add</button>
+                    <button type="button" onclick="hideDialog()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Predict Disease Dialog Box -->
+    <div id="predictDiseaseDialog" class="dialog">
+        <div class="dialog-content">
+            <h2>Upload Medical Image</h2>
+            <div class="upload-container">
+                <input type="file" id="imageUpload" accept="image/*" class="file-input">
+                <button class="upload-btn" onclick="uploadImage()">Upload</button>
+            </div>
+            <div id="prediction-result" class="prediction-result">
+                Prediction results will be displayed here
+            </div>
+            <div class="dialog-buttons">
+                <button type="button" onclick="getPrediction()">Get Prediction</button>
+                <button type="button" onclick="hidePredictDialog()">Close</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
