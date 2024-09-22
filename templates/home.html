@@ -14,24 +14,15 @@
         <h2>HealthPredict</h2>
         <button onclick="showDialog()">Add Patient</button>
         <!-- <button onclick="predictDisease()">Predict Disease</button> -->
-        <button onclick="showPredictDialog()">Predict Disease</button>
+        <!-- <button onclick="showPredictDialog()">Predict Disease</button> -->
+        <button onclick="window.location.href='/predict'">Predict Disease</button>
     </div>
     <div class="main-content">
         <h1>Patients</h1>
         <div id="patient-list">
             {% for patient in patients %}
-                <div class="patient-card" 
-                    onclick="showPatientDetails(
-                        '{{ patient.name }}',
-                        '{{ patient.age }}',
-                        '{{ patient.contact }}',
-                        '{{ patient.email }}',
-                        '{{ patient.address }}',
-                        '{{ patient.profile_image_path }}'
-                    )">
-                    <img src="{{ patient.profile_image_path }}" 
-                         alt="{{ patient.name }}'s Profile Image" 
-                         class="profile-img">
+                <div class="patient-card" onclick="showPatientDetails('{{ patient.name }}', '{{ patient.age }}', '{{ patient.contact }}', '{{ patient.email }}', '{{ patient.address }}', '{{ patient.profile_image_path }}')">
+                    <img src="{{ patient.profile_image_path }}" alt="{{ patient.name }}'s Profile Image" class="profile-img">
                     <div class="patient-info">
                         <p><strong>{{ patient.name }}</strong></p>
                         <p>Age: {{ patient.age }}</p>
@@ -39,6 +30,8 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+    
     
         <!-- Patient Details Dialog Box -->
         <div id="patientDetailsDialog" class="dialog">
@@ -86,7 +79,7 @@
         </div>
     </div>
 
-    <!-- Predict Disease Dialog Box -->
+    <!-- Predict Disease Dialog Box
     <div id="predictDiseaseDialog" class="dialog">
         <div class="dialog-content">
             <h2>Upload Medical Image</h2>
@@ -102,7 +95,7 @@
                 <button type="button" onclick="hidePredictDialog()">Close</button>
             </div>
         </div>
-    </div>
+    </div> -->
 
 </body>
 </html>

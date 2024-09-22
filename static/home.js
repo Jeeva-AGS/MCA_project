@@ -41,40 +41,26 @@ function hideDialog() {
 // }
 
 function addPatient() {
-    const name = document.getElementById('name').value;
-    const age = document.getElementById('age').value;
-    const contact = document.getElementById('contact').value;
-    const address = document.getElementById('address').value;
-    const email = document.getElementById('email').value;
-    const profileImage = document.getElementById('profileImage').files[0];
+    // Get the form data
+    var formData = new FormData(document.getElementById('patientForm'));
     
-    if (name && age && contact && address && email && profileImage) {
-        // Create a FormData object to send file and text data
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('age', age);
-        formData.append('contact', contact);
-        formData.append('address', address);
-        formData.append('email', email);
-        formData.append('profileImage', profileImage);
-        
-        // Send the data to the server using a POST request
-        fetch('/add_patient', {
-            method: 'POST',
-            body: formData,
-        }).then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                displayPatient(data.patient); // Display new patient on the page
-                hideDialog(); // Hide the dialog box after adding the patient
-            } else {
-                alert('Error adding patient. Please try again.');
-            }
-        });
-    } else {
-        alert('Please fill all fields and upload a profile image.');
-    }
+    // Create an AJAX request to send the form data to the server
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/add_patient', true);
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            alert('Patient added successfully!');
+            hideDialog();
+            window.location.reload(); // Refresh the page to show the new patient
+        } else {
+            alert('Failed to add patient. Please try again.');
+        }
+    };
+    
+    xhr.send(formData); // Send the form data to the server
 }
+
 
 function displayPatient(patient) {
     const patientList = document.getElementById('patient-list');
@@ -95,48 +81,6 @@ function displayPatient(patient) {
 
     patientList.appendChild(patientCard); // Append the new patient card to the list
 }
-
-
-// Function to display a new patient card on the page
-function displayPatient(patient) {
-    const patientList = document.getElementById('patient-list');
-    const patientCard = document.createElement('div');
-    patientCard.classList.add('patient-card');
-
-    // Display patient information and profile image
-    patientCard.innerHTML = `
-        <img src="${patient.profileImageUrl}" alt="${patient.name}'s Profile Image" class="profile-img">
-        <p><strong>Name:</strong> ${patient.name}</p>
-        <p><strong>Age:</strong> ${patient.age}</p>
-        <p><strong>Contact:</strong> ${patient.contact}</p>
-        <p><strong>Address:</strong> ${patient.address}</p>
-        <p><strong>Email:</strong> ${patient.email}</p>
-    `;
-
-    patientList.appendChild(patientCard); // Append the new patient card to the list
-}
-
-
-
-// Function to display a new patient card on the page
-function displayPatient(patient) {
-    const patientList = document.getElementById('patient-list');
-    const patientCard = document.createElement('div');
-    patientCard.classList.add('patient-card');
-
-    // Display patient information and profile image
-    patientCard.innerHTML = `
-        <img src="${patient.profileImageUrl}" alt="${patient.name}'s Profile Image" class="profile-img">
-        <p><strong>Name:</strong> ${patient.name}</p>
-        <p><strong>Age:</strong> ${patient.age}</p>
-        <p><strong>Contact:</strong> ${patient.contact}</p>
-        <p><strong>Address:</strong> ${patient.address}</p>
-        <p><strong>Email:</strong> ${patient.email}</p>
-    `;
-
-    patientList.appendChild(patientCard); // Append the new patient card to the list
-}
-
 
 
 // Function to fetch and display all patients on page load

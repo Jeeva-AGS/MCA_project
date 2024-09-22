@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, session , jsonify
+from flask import Flask, render_template, request, redirect, session , jsonify, url_for, send_from_directory
+
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -6,8 +7,14 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-UPLOAD_FOLDER = 'uploads/'  # Directory to save profile images
+# UPLOAD_FOLDER = 'uploads/'  # Directory to save profile images
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Check if the file extension is allowed
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Database Connection
 db = mysql.connector.connect(
@@ -21,7 +28,10 @@ db = mysql.connector.connect(
 def index():
     return render_template('login.html')
 
-
+# Route to serve files from the uploads directory
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 # # Sign-up Route
 # @app.route('/signup', methods=['POST'])
 # def signup():
@@ -121,13 +131,15 @@ def home():
 
     # Process patient data for frontend display
     for patient in patients:
-        # Assume profile images are stored in the static/uploads directory
+        # Check if a profile image exists for the patient
         if patient['profile_image_path']:
-            patient['profile_image_path'] = f'uploads/{patient["profile_image_path"]}'
+            patient['profile_image_path'] = url_for('uploaded_file', filename=patient["profile_image_path"].split('/')[-1])
         else:
-            patient['profile_image_path'] = 'uploads/default_profile.png'  # Use default image if none
+            patient['profile_image_path'] = url_for('static', filename='images/default_profile.jpg')  # Use default image if none
 
     return render_template('home.html', patients=patients)
+
+
 
 
 
@@ -166,45 +178,85 @@ def add_patient():
     contact = request.form['contact']
     address = request.form['address']
     email = request.form['email']
+
     profile_image = request.files['profileImage']
+    image_path = None
     
-    if profile_image:
-        # Save profile image
+    if profile_image and allowed_file(profile_image.filename):
         filename = secure_filename(profile_image.filename)
-        profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        profile_image.save(profile_image_path)
-    
-    # Store patient information in the database
-    # Replace with actual database insertion logic
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        profile_image.save(image_path)  # Save the file to the uploads folder
+        image_path = image_path.replace("\\", "/")
+
+    # Insert the new patient into the database
     cursor = db.cursor()
-    cursor.execute("INSERT INTO patients (name, age, contact, address, email, profile_image_path) VALUES (%s, %s, %s, %s, %s, %s)", 
-                   (name, age, contact, address, email, profile_image_path))
+    cursor.execute("""
+        INSERT INTO patients (name, age, contact, email, address, profile_image_path)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """, (name, age, contact, email, address, image_path))
     db.commit()
-    
-    # Return the new patient data to be displayed in the frontend
-    new_patient = {
-        'name': name,
-        'age': age,
-        'contact': contact,
-        'address': address,
-        'email': email,
-        'profileImageUrl': f'uploads/{filename}'
-    }
-    
-    return jsonify({'success': True, 'patient': new_patient})
+
+    return jsonify({'message': 'Patient added successfully!'})
 
 
-# Predict Disease Route (Placeholder for actual ML logic)
-@app.route('/predict', methods=['POST'])
+# # Predict Disease Route (Placeholder for actual ML logic)
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     # if 'user' not in session:
+#     #     return redirect('/login')
+
+#     image = request.files['image']
+#     # Here you can integrate your ML model to process the image
+
+#     result = "Prediction result goes here"  # Replace with actual model prediction
+#     return render_template('predict_disease.html', result=result)
+
+
+@app.route('/get_patients')
+def get_patients():
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT id, name, age FROM patients")
+    patients = cursor.fetchall()
+    return jsonify(patients)
+
+
+
+@app.route('/predict')
 def predict():
-    # if 'user' not in session:
-    #     return redirect('/login')
+    # Fetch all patients from the database
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM patients")
+    patients = cursor.fetchall()
 
-    image = request.files['image']
-    # Here you can integrate your ML model to process the image
+    # Pass patient data to the predict.html template
+    return render_template('predict.html', patients=patients)
 
-    result = "Prediction result goes here"  # Replace with actual model prediction
-    return render_template('predict_disease.html', result=result)
+
+@app.route('/predict_disease', methods=['POST'])
+def predict_disease():
+    patient_id = request.form['patientId']
+    disease = request.form['disease']
+    image = request.files['predictImage']
+    
+    # Save the image temporarily for processing
+    if image and allowed_file(image.filename):
+        filename = secure_filename(image.filename)
+        image_path = os.path.join('temp', filename)
+        image.save(image_path)
+
+        # Here you would call your model to predict the disease based on the image
+        # For demonstration, let's assume the model returns a simple message
+        predicted_result = f"Predicted {disease} for patient ID {patient_id}."
+
+        # Remove the temporary image after prediction
+        os.remove(image_path)
+
+        return jsonify({'success': True, 'result': predicted_result})
+    else:
+        return jsonify({'success': False, 'message': 'Invalid image file.'})
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

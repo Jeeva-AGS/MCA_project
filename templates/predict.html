@@ -1,0 +1,57 @@
+<!-- Predict Disease Page (predict.html) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Disease</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='predict.css') }}">
+    <script src="{{ url_for('static', filename='predict.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Select Patient</h2>
+            <!-- Patient dropdown or search box -->
+            <select id="patientSelect" class="patient-dropdown">
+                <!-- Options will be dynamically loaded here -->
+            </select>
+    
+            <h2>Select Disease</h2>
+            <!-- Disease selection using radio buttons -->
+            <div class="disease-selection">
+                <label>
+                    <input type="radio" name="disease" value="Disease A"> Disease A
+                </label>
+                <label>
+                    <input type="radio" name="disease" value="Disease B"> Disease B
+                </label>
+                <label>
+                    <input type="radio" name="disease" value="Disease C"> Disease C
+                </label>
+            </div>
+        </div>
+    
+        <div class="main-content">
+            <!-- Upload and Prediction Section -->
+            <div class="upload-section">
+                <h3>Upload Medical Image</h3>
+                <div class="upload-box">
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <button id="uploadBtn">Upload</button>
+            </div>
+    
+            <div class="prediction-section">
+                <h3>Prediction Results</h3>
+                <div id="prediction-result">
+                    <!-- Prediction results will be displayed here -->
+                    Prediction results will be displayed here
+                </div>
+                <button id="predictBtn">Get Prediction</button>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
