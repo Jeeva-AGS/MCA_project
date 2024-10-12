@@ -4,6 +4,16 @@ import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
+import datetime
+
+
+
+from tensorflow.keras.utils import load_img
+from tensorflow.keras.utils import img_to_array
+from tensorflow.keras.models import load_model
+import numpy as np
+loaded_model = load_model(r'C:\Users\jeeva\Study\MCA\final_project\models\brain_tumor1.h5')
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -11,6 +21,14 @@ app.secret_key = 'your_secret_key'
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+# Folder to store prediction images
+PREDICTION_FOLDER = 'prediction_uploads'
+app.config['PREDICTION_FOLDER'] = PREDICTION_FOLDER
+
+if not os.path.exists(PREDICTION_FOLDER):
+    os.makedirs(PREDICTION_FOLDER)
 
 # Check if the file extension is allowed
 def allowed_file(filename):
@@ -32,16 +50,7 @@ def index():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-# # Sign-up Route
-# @app.route('/signup', methods=['POST'])
-# def signup():
-#     username = request.form['username']
-#     password = generate_password_hash(request.form['password'])
 
-#     cursor = db.cursor()
-#     cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
-#     db.commit()
-#     return redirect('/login')
 
 # Route for handling the signup
 @app.route('/signup', methods=['POST'])
@@ -63,23 +72,6 @@ def signup():
 
         return redirect('/login')
 
-# # Login Route
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-
-#         cursor = db.cursor()
-#         cursor.execute("SELECT password FROM users WHERE username = %s", (username,))
-#         result = cursor.fetchone()
-
-#         if result and check_password_hash(result[0], password):
-#             session['user'] = username
-#             return redirect('/home')
-#         else:
-#             return "Invalid credentials"
-#     return render_template('login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -108,20 +100,6 @@ def login():
 
 
 
-# # Home Page Route
-# @app.route('/home')
-# def home():
-#     # if 'user' not in session:
-#     #     return redirect('/login')
-
-#     cursor = db.cursor(dictionary=True)
-#     cursor.execute("SELECT * FROM patients")
-#     patients = cursor.fetchall()
-#     cursor.close()
-
-#     return render_template('home.html', patients=patients)
-
-
 @app.route('/home')
 def home():
     # Query the patients from the database
@@ -135,41 +113,11 @@ def home():
         if patient['profile_image_path']:
             patient['profile_image_path'] = url_for('uploaded_file', filename=patient["profile_image_path"].split('/')[-1])
         else:
-            patient['profile_image_path'] = url_for('static', filename='images/default_profile.jpg')  # Use default image if none
+            patient['profile_image_path'] = url_for('static', filename='images/user.png')  # Use default image if none
 
     return render_template('home.html', patients=patients)
 
 
-
-
-
-
-# @app.route('/get_patients', methods=['GET'])
-# def get_patients():
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT name, age FROM patients")
-#     patients = cursor.fetchall()
-#     cursor.close()
-#     conn.close()
-
-#     return jsonify(patients)
-
-
-# # Add Patient Route
-# @app.route('/add_patient', methods=['POST'])
-# def add_patient():
-#     if 'user' not in session:
-#         return redirect('/login')
-
-#     name = request.form['name']
-#     age = request.form['age']
-
-#     cursor = db.cursor()
-#     cursor.execute("INSERT INTO patients (name, age) VALUES (%s, %s)", (name, age))
-#     db.commit()
-
-#     return redirect('/home')
 
 @app.route('/add_patient', methods=['POST'])
 def add_patient():
@@ -199,18 +147,6 @@ def add_patient():
     return jsonify({'message': 'Patient added successfully!'})
 
 
-# # Predict Disease Route (Placeholder for actual ML logic)
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     # if 'user' not in session:
-#     #     return redirect('/login')
-
-#     image = request.files['image']
-#     # Here you can integrate your ML model to process the image
-
-#     result = "Prediction result goes here"  # Replace with actual model prediction
-#     return render_template('predict_disease.html', result=result)
-
 
 @app.route('/get_patients')
 def get_patients():
@@ -221,40 +157,76 @@ def get_patients():
 
 
 
-@app.route('/predict')
-def predict():
-    # Fetch all patients from the database
+@app.route('/predict_page')
+def predict_page():
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM patients")
+    cursor.execute("SELECT id, name, age FROM patients")
     patients = cursor.fetchall()
-
-    # Pass patient data to the predict.html template
     return render_template('predict.html', patients=patients)
 
 
-@app.route('/predict_disease', methods=['POST'])
-def predict_disease():
-    patient_id = request.form['patientId']
-    disease = request.form['disease']
-    image = request.files['predictImage']
-    
-    # Save the image temporarily for processing
+# Route to handle form submission and prediction
+@app.route('/predict', methods=['POST'])
+def predict():
+    patient_id = request.form.get('patient_id')
+    disease = request.form.get('disease')
+    if 'image' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    image = request.files['image']
+
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
-        image_path = os.path.join('temp', filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         image.save(image_path)
 
-        # Here you would call your model to predict the disease based on the image
-        # For demonstration, let's assume the model returns a simple message
-        predicted_result = f"Predicted {disease} for patient ID {patient_id}."
+        # Perform your prediction logic (Mocking a result here)
+        prediction_result = result(image_path)
+        # prediction_result = "Prediction result text"
 
-        # Remove the temporary image after prediction
-        os.remove(image_path)
+        # Save result to database
+        # db = connect_db()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO predictions (patient_id, disease, image_path, prediction_result)
+            VALUES (%s, %s, %s, %s)
+        """, (patient_id, disease, image_path, prediction_result))
+        db.commit()
+        cursor.close()
+        db.close()
 
-        return jsonify({'success': True, 'result': predicted_result})
-    else:
-        return jsonify({'success': False, 'message': 'Invalid image file.'})
+        return jsonify({'result': prediction_result})
 
+    return jsonify({'error': 'Invalid file type'}), 400
+
+
+def result(image_path): 
+    index = ['glioma','meningioma','normal','adenoma']
+    test_image1 = load_img(image_path,target_size = (224,224))
+    test_image1 = img_to_array(test_image1)
+    test_image1 = np.expand_dims(test_image1,axis=0)
+    result1 = np.argmax(loaded_model.predict(test_image1/255.0),axis=1)
+    print(result1)
+    print(index[result1[0]])
+    return index[result1[0]]
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['PREDICTION_FOLDER'], filename)
+        file.save(file_path)
+        return jsonify({'success': True, 'file_path': file_path})
+
+    return jsonify({'error': 'File not allowed'}), 400
 
 
 

@@ -1,109 +1,111 @@
-/* Container styling for full screen */
-.container {
-    display: flex;
-    height: 100vh; /* Full height of the window */
-    max-width: 100%; /* Full width */
+/* General Styles */
+body, html {
     margin: 0;
     padding: 0;
-    background-color: #f5f7fa;
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
 }
 
-/* Sidebar styling with adjusted height */
-.sidebar {
-    width: 25%; /* Slightly narrower sidebar */
-    background-color: #e0e7ff;
-    padding: 30px; /* Increased padding for better spacing */
-    border-radius: 0 10px 10px 0; /* Rounded right corners */
-    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
-    height: 100%; /* Full height */
-    overflow-y: auto; /* Scroll if content overflows */
-}
-
-/* Sidebar title */
-.sidebar h2 {
-    color: #0056b3;
-    font-size: 1.6rem; /* Slightly larger font */
-    margin-bottom: 20px;
-}
-
-/* Dropdown styling */
-.patient-dropdown {
+.container {
     width: 100%;
-    padding: 12px; /* Increased padding */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    background-color: #6a67ce;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header nav a {
+    margin-left: 20px;
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+    max-width: 1200px;
+}
+
+.sidebar {
+    width: 25%;
+    background-color: #eef;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.sidebar h2 {
+    margin-bottom: 10px;
+}
+
+#patient-select {
+    width: 100%;
+    padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 1.1rem; /* Larger font */
+    border: 1px solid #ccc;
 }
 
-/* Disease selection styling */
-.disease-selection label {
-    display: block;
-    margin: 15px 0; /* Increased spacing */
-    font-size: 1.2rem; /* Larger font */
+.radio-group label {
+    font-size: 16px;
 }
 
-.disease-selection input[type="radio"] {
-    margin-right: 12px; /* More space between radio and label */
-}
-
-/* Main content styling */
 .main-content {
-    width: 75%;
-    padding: 40px; /* Added padding */
-    overflow-y: auto; /* Scroll if content overflows */
+    width: 70%;
 }
 
-/* Upload and prediction sections */
-.upload-section, .prediction-section {
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 30px; /* Increased padding */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+h2 {
+    margin-bottom: 10px;
+}
+
+.upload-section, .results-section {
+    background-color: #eef;
+    padding: 20px;
     margin-bottom: 20px;
+    border-radius: 8px;
 }
 
-.upload-section h3, .prediction-section h3 {
-    color: #0056b3;
-    font-size: 1.4rem;
-    margin-bottom: 20px;
+#image {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
-/* Upload box styling */
-.upload-box {
-    border: 2px dashed #0056b3;
-    border-radius: 10px;
-    padding: 40px;
-    text-align: center;
-    color: #777;
-    font-size: 1.1rem; /* Larger font */
-    margin-bottom: 15px; /* More spacing */
-}
-
-/* Button styling */
 button {
-    background-color: #0056b3;
-    color: #fff;
-    padding: 12px 24px; /* Larger button */
+    background-color: #000;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    border-radius: 8px; /* More rounded corners */
     cursor: pointer;
-    font-size: 1.1rem; /* Larger font */
-    transition: background-color 0.3s;
+    border-radius: 5px;
 }
 
 button:hover {
-    background-color: #004499;
+    background-color: #444;
 }
 
-/* Prediction result styling */
-#prediction-result {
-    background-color: #f0f0f0;
-    padding: 30px; /* Increased padding */
-    border-radius: 10px;
-    min-height: 150px; /* Larger area */
-    text-align: center;
-    color: #333;
-    font-size: 1.2rem; /* Larger font */
+.results-section p {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #ccc;
+    border-radius: 8px;
 }

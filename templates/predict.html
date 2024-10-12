@@ -1,57 +1,107 @@
-<!-- Predict Disease Page (predict.html) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predict Disease</title>
+    <title>HealthPredict</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='predict.css') }}">
-    <script src="{{ url_for('static', filename='predict.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='predict.js') }}"></script> -->
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>Select Patient</h2>
-            <!-- Patient dropdown or search box -->
-            <select id="patientSelect" class="patient-dropdown">
-                <!-- Options will be dynamically loaded here -->
-            </select>
-    
-            <h2>Select Disease</h2>
-            <!-- Disease selection using radio buttons -->
-            <div class="disease-selection">
-                <label>
-                    <input type="radio" name="disease" value="Disease A"> Disease A
-                </label>
-                <label>
-                    <input type="radio" name="disease" value="Disease B"> Disease B
-                </label>
-                <label>
-                    <input type="radio" name="disease" value="Disease C"> Disease C
-                </label>
-            </div>
-        </div>
-    
-        <div class="main-content">
-            <!-- Upload and Prediction Section -->
-            <div class="upload-section">
-                <h3>Upload Medical Image</h3>
-                <div class="upload-box">
-                    <input type="file" id="imageUpload" accept="image/*">
+        <header>
+            <h1>HealthPredict</h1>
+            <nav>
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </nav>
+        </header>
+        <main>
+            <div class="sidebar">
+                <h2>Select Patient</h2>
+                <select name="patient" id="patient-dropdown" style="width: 100%; padding: 10px; margin-bottom: 20px;">
+                    {% for patient in patients %}
+                        <option value="{{ patient['id'] }}">{{ patient['name'] }} (Age: {{ patient['age'] }})</option>
+                    {% endfor %}
+                </select>
+                
+
+                <h2>Select Disease</h2>
+                <div class="radio-group">
+                    <label><input type="radio" name="disease" value="A"> Disease A</label><br>
+                    <label><input type="radio" name="disease" value="B"> Disease B</label><br>
+                    <label><input type="radio" name="disease" value="C"> Disease C</label>
                 </div>
-                <button id="uploadBtn">Upload</button>
             </div>
-    
-            <div class="prediction-section">
-                <h3>Prediction Results</h3>
-                <div id="prediction-result">
-                    <!-- Prediction results will be displayed here -->
-                    Prediction results will be displayed here
+
+            <div class="main-content">
+                <h2>Upload Medical Image</h2>
+                <div class="upload-section">
+                    <form id="upload-form" method="POST" enctype="multipart/form-data">
+                        <input type="file" id="image" name="image" accept="image/*">
+                        <button type="submit" id="upload-btn">Upload</button>
+                    </form>
                 </div>
-                <button id="predictBtn">Get Prediction</button>
+
+                <h2>Prediction Results</h2>
+                <div class="results-section">
+                    <p id="prediction-results">Prediction results will be displayed here</p>
+                    <button id="predict-btn">Get Prediction</button>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
+    <script>
+        document.getElementById('predict-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+            let patient_id = document.getElementById('patient-dropdown').value;
+            let disease = document.querySelector('input[name="disease"]:checked');
+            let imageFile = document.getElementById('image').files[0];
+   
+            if (!patient_id) {
+                alert("Please select a patient.");
+                return;
+            }
+   
+            if (!disease) {
+                alert("Please select a disease.");
+                return;
+            }
+   
+            if (!imageFile) {
+                alert("Please upload an image first.");
+                return;
+            }
+   
+            let formData = new FormData();
+            formData.append('patient_id', patient_id);
+            formData.append('disease', disease.value);
+            formData.append('image', imageFile);
+   
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    document.getElementById('prediction-results').innerText = data.result;
+                } else {
+                    alert("Error: Could not get prediction result.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while getting the prediction.");
+            });
+        });
+    </script>
+   
+    
+    
+    <!-- Hidden input to store file path -->
+    <input type="hidden" id="file_path" name="file_path">
     
 </body>
 </html>

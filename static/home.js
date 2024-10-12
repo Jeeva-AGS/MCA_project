@@ -8,38 +8,6 @@ function hideDialog() {
     document.getElementById('addPatientDialog').style.display = 'none';
 }
 
-// // Function to add patient details to the list and send to the server
-// function addPatient() {
-//     const name = document.getElementById('name').value;
-//     const age = document.getElementById('age').value;
-
-//     if (name && age) {
-//         // Sending data to the server
-//         fetch('/add_patient', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ name, age }),
-//         }).then(response => response.json())
-//         .then(data => {
-//             if (data.success) {
-//                 displayPatient(name, age); // Add new patient to the page
-//                 hideDialog(); // Hide the dialog box after adding the patient
-//             }
-//         });
-//     }
-// }
-
-// // Function to display a new patient card on the page
-// function displayPatient(name, age) {
-//     const patientList = document.getElementById('patient-list');
-//     const patientCard = document.createElement('div');
-//     patientCard.classList.add('patient-card');
-//     patientCard.innerHTML = `<p><strong>Name:</strong> ${name}</p><p><strong>Age:</strong> ${age}</p>`;
-//     patientList.appendChild(patientCard); // Append the new patient card to the list
-// }
-
 function addPatient() {
     // Get the form data
     var formData = new FormData(document.getElementById('patientForm'));
@@ -117,17 +85,6 @@ function uploadImage() {
     }
 }
 
-// Handle Prediction Request
-function getPrediction() {
-    // Mockup prediction logic. Replace with actual API call.
-    const predictionResult = document.getElementById('prediction-result');
-    predictionResult.innerHTML = "Processing..."; // Show loading message
-    
-    // Simulate a delay for the prediction process
-    setTimeout(() => {
-        predictionResult.innerHTML = "Prediction: Disease B";
-    }, 2000);
-}
 
 
 // Show patient details in dialog
