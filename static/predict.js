@@ -1,51 +1,43 @@
-// document.addEventListener('DOMContentLoaded', function () {
-//     loadPatients();
+// document.getElementById('predict-btn').addEventListener('click', function (e) {
+//     e.preventDefault();
+//     let patient_id = document.getElementById('patient-dropdown').value;
+//     let disease = document.querySelector('input[name="disease"]:checked');
+//     let imageFile = document.getElementById('image').files[0];
 
-//     // Handle file upload
-//     const uploadBox = document.querySelector('.upload-box');
-//     const imageUploadInput = document.getElementById('imageUpload');
-    
-//     uploadBox.addEventListener('click', () => {
-//         imageUploadInput.click();
-//     });
+//     if (!patient_id) {
+//         alert("Please select a patient.");
+//         return;
+//     }
 
-//     imageUploadInput.addEventListener('change', () => {
-//         if (imageUploadInput.files.length > 0) {
-//             uploadBox.textContent = imageUploadInput.files[0].name;
+//     if (!disease) {
+//         alert("Please select a disease.");
+//         return;
+//     }
+
+//     if (!imageFile) {
+//         alert("Please upload an image first.");
+//         return;
+//     }
+
+//     let formData = new FormData();
+//     formData.append('patient_id', patient_id);
+//     formData.append('disease', disease.value);
+//     formData.append('image', imageFile);
+
+//     fetch('/predict', {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.result) {
+//             document.getElementById('prediction-results').innerText = data.result;
+//         } else {
+//             alert("Error: Could not get prediction result.");
 //         }
-//     });
-
-//     // Handle prediction
-//     document.getElementById('predictBtn').addEventListener('click', function () {
-//         const patientId = document.getElementById('patientSelect').value;
-//         const disease = document.querySelector('input[name="disease"]:checked').value;
-
-//         if (!patientId || !disease || !imageUploadInput.files.length) {
-//             alert('Please select patient, disease, and upload an image.');
-//             return;
-//         }
-
-//         // Call prediction API or perform the desired action
-//         // For example: make a POST request to send the image and get prediction
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//         alert("An error occurred while getting the prediction.");
 //     });
 // });
-
-// function loadPatients() {
-//     fetch('/get_patients')
-//         .then(response => response.json())
-//         .then(patients => {
-//             const patientSelect = document.getElementById('patientSelect');
-//             patients.forEach(patient => {
-//                 const option = document.createElement('option');
-//                 // Display patient name and additional details
-//                 option.value = patient.id;
-//                 option.textContent = `${patient.name} (Age: ${patient.age})`;
-//                 patientSelect.appendChild(option);
-//             });
-//         })
-//         .catch(error => console.error('Error loading patients:', error));
-// }
-
-
-
-

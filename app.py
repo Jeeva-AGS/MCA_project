@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 import os
 import datetime
 
+from flask import send_from_directory
+
 
 
 from tensorflow.keras.utils import load_img
@@ -39,7 +41,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="Jags@7227",
-    database="your_database_name"
+    database="healthpredict"
 )
 
 @app.route('/')
@@ -159,10 +161,19 @@ def get_patients():
 
 @app.route('/predict_page')
 def predict_page():
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id, name, age FROM patients")
-    patients = cursor.fetchall()
-    return render_template('predict.html', patients=patients)
+    # cursor = db.cursor(dictionary=True)
+    # cursor.execute("SELECT id, name, age FROM patients")
+    # patients = cursor.fetchall()
+    # return render_template('predict.html', patients=patients)
+    
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT id, name, age FROM patients")  # Sample query, replace as necessary
+        patients = cursor.fetchall()
+        return render_template('predict.html', patients=patients)
+    finally:
+        cursor.close()
+        # db.close()
 
 
 # Route to handle form submission and prediction
@@ -192,7 +203,7 @@ def predict():
         """, (patient_id, disease, image_path, prediction_result))
         db.commit()
         cursor.close()
-        db.close()
+        # db.close()
 
         return jsonify({'result': prediction_result})
 
@@ -227,6 +238,33 @@ def upload_file():
         return jsonify({'success': True, 'file_path': file_path})
 
     return jsonify({'error': 'File not allowed'}), 400
+
+
+
+@app.route('/uploads/<filename>')
+def get_uploaded_file(filename):
+    return send_from_directory('uploads', filename)
+
+
+
+@app.route('/prediction_result_page')
+def prediction_result_page():
+    # db = connect_db()
+    cursor = db.cursor(dictionary=True)
+
+    # Fetch all predictions from the database
+    cursor.execute("""
+    SELECT p.name, p.age, pr.disease, pr.prediction_result, pr.image_path, pr.prediction_time
+    FROM predictions pr
+    JOIN patients p ON p.id = pr.patient_id
+    ORDER BY pr.prediction_time DESC
+    """)
+    predictions = cursor.fetchall()
+
+    cursor.close()
+    # db.close()
+
+    return render_template('prediction_results.html', predictions=predictions)
 
 
 

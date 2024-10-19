@@ -11,11 +11,6 @@
     <div class="container">
         <header>
             <h1>HealthPredict</h1>
-            <nav>
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Contact</a>
-            </nav>
         </header>
         <main>
             <div class="sidebar">
@@ -29,9 +24,9 @@
 
                 <h2>Select Disease</h2>
                 <div class="radio-group">
-                    <label><input type="radio" name="disease" value="A"> Disease A</label><br>
-                    <label><input type="radio" name="disease" value="B"> Disease B</label><br>
-                    <label><input type="radio" name="disease" value="C"> Disease C</label>
+                    <label><input type="radio" name="disease" value="Brain tumor"> Brain tumor</label><br>
+                    <!-- <label><input type="radio" name="disease" value="B"> Disease B</label><br>
+                    <label><input type="radio" name="disease" value="C"> Disease C</label> -->
                 </div>
             </div>
 
@@ -46,10 +41,17 @@
 
                 <h2>Prediction Results</h2>
                 <div class="results-section">
-                    <p id="prediction-results">Prediction results will be displayed here</p>
+                    <p id="prediction-results">all is well</p>
                     <button id="predict-btn">Get Prediction</button>
                 </div>
             </div>
+            <!-- <div id="loading" style="display:none;">Loading... Please wait while we process your prediction.</div>
+            <div id="prediction-results"></div> -->
+            <div id="loading" style="display:none;">
+                <div id="loading-spinner"></div>
+                <p>Processing your prediction...</p>
+            </div>
+            
         </main>
     </div>
     <script>
@@ -78,6 +80,9 @@
             formData.append('patient_id', patient_id);
             formData.append('disease', disease.value);
             formData.append('image', imageFile);
+
+            // Show the loading message
+            document.getElementById('loading').style.display = 'block';
    
             fetch('/predict', {
                 method: 'POST',
@@ -85,6 +90,8 @@
             })
             .then(response => response.json())
             .then(data => {
+                // Hide the loading message
+                document.getElementById('loading').style.display = 'none';
                 if (data.result) {
                     document.getElementById('prediction-results').innerText = data.result;
                 } else {

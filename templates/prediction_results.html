@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='results.css') }}">
+    <script src="{{ url_for('static', filename='results.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Results</h1>
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Age</th>
+                    <th>Disease</th>
+                    <th>Prediction Result</th>
+                    <th>Image</th>
+                    <th>Prediction Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td>{{ prediction['name'] }}</td>
+                    <td>{{ prediction['age'] }}</td>
+                    <td>{{ prediction['disease'] }}</td>
+                    <td>{{ prediction['prediction_result'] }}</td>
+                    <td>
+                        <!-- Image that will trigger modal when clicked -->
+                        <img src="{{ url_for('get_uploaded_file', filename=prediction['image_path'].replace('\\', '/').split('uploads/')[-1]) }}" 
+                            alt="Image" class="thumbnail round-img" 
+                            onclick="openModal(this.src)">
+
+
+                    </td>
+                    <td>{{ prediction['prediction_time'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for displaying the image -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // Function to open modal and set the image
+        function openModal(imageSrc) {
+            var modal = document.getElementById('imageModal');
+            var modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc; // Set the clicked image's src to the modal image
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            var modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
